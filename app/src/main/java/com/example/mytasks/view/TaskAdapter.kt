@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -12,12 +13,13 @@ import com.example.mytasks.R
 import com.example.mytasks.model.Task
 
 class TaskAdapter(
-    private val onTaskCheckedChanged: (Task, Boolean) -> Unit
+    private val onTaskCheckedChanged: (Task, Boolean) -> Unit,
+    private val onTaskDeleteClicked: (Task) -> Unit
 ) : ListAdapter<Task, TaskAdapter.TaskViewHolder>(TaskDiffCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_task, parent, false)
-        return TaskViewHolder(view, onTaskCheckedChanged)
+        return TaskViewHolder(view, onTaskCheckedChanged, onTaskDeleteClicked)
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
@@ -26,26 +28,28 @@ class TaskAdapter(
 
     class TaskViewHolder(
         itemView: View,
-        private val onTaskCheckedChanged: (Task, Boolean) -> Unit
+        private val onTaskCheckedChanged: (Task, Boolean) -> Unit,
+        private val onTaskDeleteClicked: (Task) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val tvTaskName: TextView = itemView.findViewById(R.id.tvTaskName)
         private val cbCompleted: CheckBox = itemView.findViewById(R.id.cbCompleted)
+        private val btnDelete: ImageButton = itemView.findViewById(R.id.btnDelete)
 
         fun bind(task: Task) {
             tvTaskName.text = task.name
 
-            // Remove o listener antigo para evitar que seja acionado durante a reciclagem.
             cbCompleted.setOnCheckedChangeListener(null)
-
-            // Define o estado do CheckBox com base nos dados do item ATUAL.
             cbCompleted.isChecked = task.isCompleted
 
             updateTaskAppearance(task)
 
-            // Adiciona o novo listener para responder às interações do usuário.
             cbCompleted.setOnCheckedChangeListener { _, isChecked ->
                 onTaskCheckedChanged(task, isChecked)
+            }
+
+            btnDelete.setOnClickListener {
+                onTaskDeleteClicked(task)
             }
         }
 
