@@ -82,6 +82,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadInitialTasks() {
         taskList.addAll(listOf(
+            Task(id = nextId++, name = "Comprar placa de video rtx 5090ti"),
+            Task(id = nextId++, name = "Comprar processador ryzen 9"),
+            Task(id = nextId++, name = "Comprar memoria ram 32gb"),
         ))
         updateAdapter()
     }
